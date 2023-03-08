@@ -1,17 +1,35 @@
-import React,{useState} from "react";
+import React,{useEffect, useState} from "react";
 import QRCode from "react-qr-code";
 import io from "socket.io-client"
+import axios from 'axios'
 import success from '../asserts/success.png'
+import uuid from 'react-uuid';
 
 function QRPage() {
 
-  const [id,setId]=useState(Math.floor(100000 + Math.random() * 900000))
+  const [id,setId]=useState(uuid())
   const [submited,setSubmited]=useState(false)
 
-  let socket = io("http://localhost:8000/");
-  socket.on('submited', msg => {
-    setSubmited(true)
-})
+//   let socket = io("http://192.168.156.146:8000/");
+//   socket.on('submited', msg => {
+//     setSubmited(true)
+// })
+
+setInterval(async()=>{
+  await axios({
+      method: 'get',
+      url: `http://192.168.156.146:8000/response/${id.toString()}`,
+    }).then(res => {  
+        console.log(res);
+        setSubmited(res.data.submitted);
+
+    }).catch((e)=>{
+        console.log(e);
+    })
+},2000);
+
+
+
 
   return (
 
@@ -22,7 +40,7 @@ function QRPage() {
         <h2 className="text-muted my-5">
           Visitors, scan the following qr code
         </h2>
-        <QRCode value={`http://localhost:3000/questions`} size="150" />
+        <QRCode value={`http://192.168.156.146:3000/questions/${id}`} size="150" />
       </div> :
       <div>
       <h2 className="text-muted my-5">

@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import { useParams } from 'react-router-dom';
 import axios from 'axios'
 import success from '../asserts/success.png'
 
@@ -12,6 +13,8 @@ function Questions() {
     const [submitted,setSubmitted]=useState(false )
     const [submittedMsg,setSubmittedMsg]=useState('')
 
+    let { id } = useParams();
+
     const onSubmit=async(e)=>{
         e.preventDefault();
         if(name==''||email==''||age==''||mobile==''||role==''){
@@ -21,7 +24,7 @@ function Questions() {
         console.log(name,email,age,mobile,role);
         await axios({
       method: 'post',
-      url: `http://localhost:8000/question`,
+      url: `http://192.168.156.146:8000/question/${id}`,
       data: {name,email,age,mobile,role}
     }).then(res => {  
         console.log(res);
@@ -34,6 +37,7 @@ function Questions() {
       {!submitted ?
       <div>
       <h1>QUESTIONERIES</h1>
+      {id=='user'?
       <div className="card shadow">
         <div className="card-body px-4">
             <label htmlFor="" className="form-lable mt-3">Name</label>
@@ -53,7 +57,28 @@ function Questions() {
             </select>
             <button className="btn btn-primary my-4" onClick={onSubmit}>Submit</button>
         </div>
+      </div>:
+      <div className="card shadow">
+        <div className="card-body px-4">
+            <label htmlFor="" className="form-lable mt-3">Admin Name</label>
+            <input type="text" className="form-control my-3" placeholder="Enter your name" value={name} onChange={(e)=>setName(e.target.value)} />
+            <label htmlFor="" className="form-lable mt-3">Admin Email</label>
+            <input type="text" className="form-control my-3" placeholder="Enter your email" value={email} onChange={(e)=>setEmail(e.target.value)} />
+            <label htmlFor="" className="form-lable mt-3">Admin Age</label>
+            <input type="text" className="form-control my-3" placeholder="Enter your age" value={age} onChange={(e)=>setAge(e.target.value)} />
+            <label htmlFor="" className="form-lable mt-3">Admin Mobile Number</label>
+            <input type="text" className="form-control my-3" placeholder="Enter your mobile number" value={mobile} onChange={(e)=>setMobile(e.target.value)} />
+            <label className="form-label mt-3">Which option best describes you?</label>
+            <select className="form-select my-3" value={role} onChange={(e)=>setRole(e.target.value)} >
+            <option value="student">Student</option>
+            <option value="intern">Intern</option>
+            <option value="professional">Professional</option>
+            <option value="other">Other</option>
+            </select>
+            <button className="btn btn-primary my-4" onClick={onSubmit}>Submit</button>
+        </div>
       </div>
+      }
       </div>:
       <div className="vh-100 d-flex text-center justify-content-center align-items-center">
       <div>
